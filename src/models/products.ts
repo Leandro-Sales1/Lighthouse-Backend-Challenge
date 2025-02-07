@@ -1,5 +1,5 @@
 
-interface IProduct {
+export interface IProduct {
   SKU: string;
   name: string;
   price: number;
