@@ -6,10 +6,10 @@ import productsRoutes from './productsRoutes';
 
 const routes = (app: Express) => {
 
-  app.use(cors())
-  app.use(express.json())
-  app.use(productsRoutes)
-  app.use(checkOutRoutes)
+  app.use(cors());
+  app.use(express.json());
+  app.use(productsRoutes);
+  app.use(checkOutRoutes);
 }
 
 export default routes;

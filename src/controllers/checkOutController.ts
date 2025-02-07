@@ -1,26 +1,36 @@
 import { Request, Response } from 'express';
-import { findAndProcessProducts } from '../utils/cart';
-import ICart from '../models/cart';
+import { prepareFinalCart, findAndProcessProducts, hasDuplicateSKUs } from '../utils/cart';
+import ICart, { ICartProducts } from '../models/cart';
 
 
 
 class CheckOutController {
 
-  static saveCart(req: Request, res: Response) {
-    const { cart }: { cart: ICart } = req.body;
+  static processCart(req: Request, res: Response) {
+    const { cart }: { cart: ICartProducts } = req.body;
+
+    if (hasDuplicateSKUs(cart)) {
+      res.status(400).json({ message: 'Invalid cart, all the products needs to have only one object.' });
+      return;
+    }
+
+    const allProductsValid = cart.every(product => product.SKU && product.quantity > 0);
+
+    if (!allProductsValid) {
+      res.status(400).json({ message: 'Invalid cart, all the products needs to have SKU and quantity.' });
+      return;
+    }
+
     const cartProducts = findAndProcessProducts(cart);
 
     if (!cartProducts || cartProducts.length === 0) {
-      res.status(404).json({ message: 'No products found' })
-      return
+      res.status(404).json({ message: 'Ops... No products found, check your SKU. ' });
+      return;
     }
 
-    const allProductsValid = cartProducts.every(product => product.SKU && product.quantity > 0);
+    const finalCart = prepareFinalCart(cartProducts);
 
-    if (!allProductsValid) {
-      res.status(400).json({ message: 'Invalid cart, all the products needs to have SKU and quantity.' })
-    }
-    res.status(200).json(cartProducts)
+    res.status(200).json(finalCart);
   }
 }
 

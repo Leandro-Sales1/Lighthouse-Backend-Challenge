@@ -1,19 +1,21 @@
 import products from "../db/products";
-import ICart, { ICartProduct } from "../models/cart";
+import ICart, { ICartProduct, ICartProducts } from "../models/cart";
 import { IProduct } from "../models/products";
 
-export const findAndProcessProducts = (receivedProducts: ICart) => {
+export const findAndProcessProducts = (receivedProducts: ICartProducts) => {
 
   const filteredProducts = products
     .filter(product =>
       receivedProducts.some(receivedProduct => product.SKU === receivedProduct.SKU)
     )
     .map(product => {
-      const receivedProduct = receivedProducts.find(p => p.SKU === product.SKU);
+      const receivedProduct = receivedProducts.find(receivedProduct => receivedProduct.SKU === product.SKU);
       return updateProductData(product, receivedProduct);
     });
 
-  return filteredProducts;
+  const finalProducts = applyConditionalDiscount(filteredProducts);
+
+  return finalProducts;
 }
 
 
@@ -51,3 +53,47 @@ export const updateProductData = (product: IProduct, receivedProduct?: ICartProd
     finalPrice
   };
 };
+
+const applyConditionalDiscount = (cartProducts: ICartProduct[]): ICartProduct[] => {
+  return cartProducts.map(product => {
+    if (product.SKU === '344222') { // Raspberry Pi
+      const macPro = cartProducts.find(cartProduct => cartProduct.SKU === '43N23P'); // MacBook Pro
+
+      if (macPro) {
+        if (macPro.quantity >= product.quantity) {
+          return { ...product, finalPrice: 0 };
+        } else {
+          const finalPrice = product.price * (product.quantity - macPro.quantity);
+          return { ...product, finalPrice: Number(finalPrice.toFixed(2)) };
+        }
+      }
+    }
+    return product;
+  });
+};
+
+
+export const prepareFinalCart = (cartProducts: ICartProduct[]): ICart => {
+  const cartTotalPrice = cartProducts.reduce((total, product) => total + product.finalPrice, 0);
+
+  return {
+    cartTotalPrice,
+    products: cartProducts
+  }
+};
+
+export const hasDuplicateSKUs = (cartProducts: ICartProduct[]): boolean => {
+  const skuCount: Record<string, number> = {};
+
+  for (const product of cartProducts) {
+    skuCount[product.SKU] = (skuCount[product.SKU] || 0) + 1;
+
+    if (skuCount[product.SKU] > 1) {
+      return true; 
+    }
+  }
+
+  return false; 
+};
+
+

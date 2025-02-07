@@ -5,6 +5,11 @@ export interface ICartProduct extends IProduct {
   finalPrice: number;
 }
 
-interface ICart extends Array<ICartProduct> { }
+export interface ICartProducts extends Array<ICartProduct> { }
+
+interface ICart {
+  cartTotalPrice: number;
+  products: ICartProduct[];
+}
 
 export default ICart;

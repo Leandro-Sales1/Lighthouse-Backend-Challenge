@@ -5,7 +5,7 @@ import CheckOutController from '../controllers/checkOutController';
 
 const checkOutRoutes = express.Router()
 
-checkOutRoutes.post('/cart', CheckOutController.saveCart)
+checkOutRoutes.post('/cart', CheckOutController.processCart)
 
 
 
