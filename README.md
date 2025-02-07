@@ -56,7 +56,7 @@ This project is a **Node.js API** designed for the Lighthouse Backend Challenge.
   {
     "SKU": "344222",
     "name": "Raspberry Pi",
-    "price": 89.99
+    "price": 30.00
   }
 ]
 ```
@@ -74,7 +74,7 @@ This project is a **Node.js API** designed for the Lighthouse Backend Challenge.
   "cart": [
     {
       "SKU": "43N23P",
-      "quantity": 3
+      "quantity": 1
     }
   ]
 }
