@@ -72,7 +72,8 @@ const applyConditionalDiscount = (cartProducts: ICartProduct[]): ICartProduct[] 
 
 
 export const prepareFinalCart = (cartProducts: ICartProduct[]): ICart => {
-  const cartTotalPrice = cartProducts.reduce((total, product) => total + product.finalPrice, 0);
+  let cartTotalPrice = cartProducts.reduce((total, product) => total + product.finalPrice, 0);
+  cartTotalPrice = Number(cartTotalPrice.toFixed(2));
 
   return {
     cartTotalPrice,
