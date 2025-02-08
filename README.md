@@ -34,7 +34,7 @@ This project is a **Node.js API** designed for the Lighthouse Backend Challenge.
 
 ### Deployed API
 
-- **Base URL:** [Lighthouse Backend Challenge](https://lighthouse-backend-challenge.vercel.app/)
+- **Base URL:** [Lighthouse Backend Challenge](https://lighthouse-backend-challenge.vercel.app/products)
 
 ---
 
@@ -120,7 +120,12 @@ This project is a **Node.js API** designed for the Lighthouse Backend Challenge.
 
 To run tests, execute:
 ```sh
-npm test
+npm run test
+```
+
+To run coverage, execute:
+```sh
+npm run test:coverage
 ```
 
 ---

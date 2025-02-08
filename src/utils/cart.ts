@@ -19,30 +19,27 @@ export const findAndProcessProducts = (receivedProducts: ICartProducts) => {
 }
 
 
-export const updateProductData = (product: IProduct, receivedProduct?: ICartProduct): ICartProduct => {
-  const sku = receivedProduct?.SKU
-  const quantity = receivedProduct?.quantity ?? 0;
-  const price = receivedProduct?.price ?? product.price;
+export const updateProductData = (product: IProduct, receivedProduct?: Partial<ICartProduct>): ICartProduct => {
+
+  if (!receivedProduct) {
+    return { ...product, quantity: 0, finalPrice: 0 };
+  }
+
+  const { SKU: sku, quantity = 0, price = product.price } = receivedProduct;
   let finalPrice = 0;
 
   // Google Home
   if (sku === '120P90' && quantity >= 3) {
-
     const setsOfThree = Math.floor(quantity / 3);
     const extras = quantity % 3;
-    finalPrice = (setsOfThree * 2 + extras) * price
-
+    finalPrice = (setsOfThree * 2 + extras) * price;
   } else {
-    finalPrice = price * quantity
+    finalPrice = price * quantity;
   }
 
   // Alexa Speaker
   if (sku === 'A304SD' && quantity >= 3) {
-    finalPrice = price * quantity
     finalPrice *= 0.9;
-
-  } else {
-    finalPrice = price * quantity
   }
 
   finalPrice = Number(finalPrice.toFixed(2));
@@ -53,6 +50,7 @@ export const updateProductData = (product: IProduct, receivedProduct?: ICartProd
     finalPrice
   };
 };
+
 
 const applyConditionalDiscount = (cartProducts: ICartProduct[]): ICartProduct[] => {
   return cartProducts.map(product => {
@@ -89,11 +87,11 @@ export const hasDuplicateSKUs = (cartProducts: ICartProduct[]): boolean => {
     skuCount[product.SKU] = (skuCount[product.SKU] || 0) + 1;
 
     if (skuCount[product.SKU] > 1) {
-      return true; 
+      return true;
     }
   }
 
-  return false; 
+  return false;
 };
 
 
